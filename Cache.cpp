@@ -1,5 +1,5 @@
 #include "main.h"
-// implement read(): 
+// implement method read(): 
 Data* Cache::read(int addr) {
     bool exist = false; // check address exist in cache
     int index = 0; // index of element containing this address.
@@ -13,15 +13,17 @@ Data* Cache::read(int addr) {
     if(exist) return arr[index]->data;
     else return NULL;
 }
+// implement method put(): put the address and the value of that address to cache from memory. So sync will be true.
 Elem* Cache::put(int addr, Data* cont) {
-    if(p >= 0 && p < MAXSIZE){
-        arr[p]->addr = addr;
-        arr[p]->data = cont;
-        arr[p]->sync = true;
+    Elem* newElem = new Elem(addr, cont, true);
+    if(p >= 0 && p < MAXSIZE){ //in case cache is not full
+        arr[p] = newElem;
+        stack[p] = newElem;
+        queue[p] = newElem;
         p++;
         return NULL;
     }
-    else if (p = MAXSIZE){
+    else if (p = MAXSIZE){ //in cace cache is full
         if(addr % 2 == 0){
             Elem* temp = new Elem(arr[0]->addr, arr[0]->data, arr[0]->sync);
             arr[0]->addr = addr;
