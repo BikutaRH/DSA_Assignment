@@ -1,8 +1,8 @@
 #include "main.h"
-
+// implement read(): 
 Data* Cache::read(int addr) {
-    bool exist = false;
-    int index = 0;
+    bool exist = false; // check address exist in cache
+    int index = 0; // index of element containing this address.
     for (int i = 0; i < MAXSIZE; i++){
         if(arr[i]->addr == addr){
             exist = true;
