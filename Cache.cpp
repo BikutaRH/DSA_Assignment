@@ -33,6 +33,7 @@ Elem* Cache::put(int addr, Data* cont) {
     cout << "2" << endl;
     return NULL;
 }
+// test github
 Elem* Cache::write(int addr, Data* cont) {
     cout << "3" << endl;
     return NULL;
