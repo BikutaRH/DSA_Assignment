@@ -15,29 +15,63 @@ Data* Cache::read(int addr) {
 }
 // implement method put(): put the address and the value of that address to cache from memory. So sync will be true.
 Elem* Cache::put(int addr, Data* cont) {
+    Elem* result;
+    int index;
     Elem* newElem = new Elem(addr, cont, true);
     if(p >= 0 && p < MAXSIZE){ //in case cache is not full
         arr[p] = newElem;
-        stack[p] = newElem;
-        queue[p] = newElem;
+        createPrio(p);
         p++;
         return NULL;
     }
-    else if (p = MAXSIZE){ //in cace cache is full
+    else if (p = MAXSIZE){ //in case cache is full
         if(addr % 2 == 0){
-            Elem* temp = new Elem(arr[0]->addr, arr[0]->data, arr[0]->sync);
-            arr[0]->addr = addr;
-            arr[0]->data = cont;
-            arr[0]->sync = false;
-            return temp; 
+            index = queuePrio();
+            result = arr[index];
+            arr[index] = newElem;
+            return result;
+        }
+        else{
+            index = stackPrio();
+            result = arr[index];
+            arr[index] = newElem;
+            return result;
         }
     }
-    cout << "2" << endl;
     return NULL;
 }
-// test github
+// method write: sync = false.
 Elem* Cache::write(int addr, Data* cont) {
-    cout << "3" << endl;
+    for(int i = 0; i < MAXSIZE; i++){
+        if(arr[i]->addr == addr) {
+            arr[i]->data = cont;
+            arr[i]->sync = false;
+            return NULL;
+        }
+    } 
+    Elem* result;
+    int index;
+    Elem* newElem = new Elem(addr, cont, false);
+    if(p >= 0 && p < MAXSIZE){ //in case cache is not full
+        arr[p] = newElem;
+        createPrio(p);
+        p++;
+        return NULL;
+    }
+    else if (p = MAXSIZE){ //in case cache is full
+        if(addr % 2 == 0){
+            index = queuePrio();
+            result = arr[index];
+            arr[index] = newElem;
+            return result;
+        }
+        else{
+            index = stackPrio();
+            result = arr[index];
+            arr[index] = newElem;
+            return result;
+        }
+    }
     return NULL;
 }
 void Cache::print() {
