@@ -29,12 +29,14 @@ Elem* Cache::put(int addr, Data* cont) {
             index = queuePrio();
             result = arr[index];
             arr[index] = newElem;
+            p = MAXSIZE + 1;
             return result;
         }
         else{
             index = stackPrio();
             result = arr[index];
             arr[index] = newElem;
+            p = MAXSIZE + 1;
             return result;
         }
     }
@@ -63,20 +65,31 @@ Elem* Cache::write(int addr, Data* cont) {
             index = queuePrio();
             result = arr[index];
             arr[index] = newElem;
+            p = MAXSIZE + 1;
             return result;
         }
         else{
             index = stackPrio();
             result = arr[index];
             arr[index] = newElem;
+            p = MAXSIZE + 1;
             return result;
         }
     }
     return NULL;
 }
 void Cache::print() {
-	for (int i = 0; i < p; i++)
-        arr[i]->print();
+    if(p == 0) throw 0;
+    else if(p > 0 && p <= MAXSIZE){
+        for(int i = p - 1; i >= 0; i--){
+            arr[i]->print();
+        } 
+    }
+    else if(p == MAXSIZE + 1){
+        sort();
+        for(int i = 0; i < MAXSIZE; i++)
+            arr[indexSort[i]]->print();
+    }
 }
 void Cache::preOrder() {
 	for (int i = 0; i < p; i++)

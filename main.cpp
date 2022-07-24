@@ -35,7 +35,7 @@ void simulate(string filename,Cache* c)
 			    ss >> addr; 
     			Data* res;
 				res = c->read(addr);
-    			if (res == NULL) {
+    			if  (res == NULL) {
     				ss >> tmp;
     				c->put(addr,getData(tmp));
     			} else {
@@ -65,7 +65,7 @@ void simulate(string filename,Cache* c)
     			c->inOrder();
     			break;
     }
-  }
+  } 
 }
 int main(int argc, char* argv[]) {
 
