@@ -3,15 +3,18 @@
 Data* Cache::read(int addr) {
     bool exist = false; // check address exist in cache
     int index = 0; // index of element containing this address.
-    for (int i = 0; i < MAXSIZE; i++){
-        if(arr[i]->addr == addr){
-            exist = true;
-            index = i;
-            break;
+    if(p == 0) return NULL;
+    else{
+        for (int i = 0; i < p; i++){
+            if(arr[i]->addr == addr){
+                exist = true;
+                index = i;
+               break;
+            }
         }
+        if(exist) return arr[index]->data;
+        else return NULL;
     }
-    if(exist) return arr[index]->data;
-    else return NULL;
 }
 // implement method put(): put the address and the value of that address to cache from memory. So sync will be true.
 Elem* Cache::put(int addr, Data* cont) {
@@ -24,7 +27,7 @@ Elem* Cache::put(int addr, Data* cont) {
         p++;
         return NULL;
     }
-    else if (p = MAXSIZE){ //in case cache is full
+    else if (p == MAXSIZE){ //in case cache is full
         if(addr % 2 == 0){
             index = queuePrio();
             result = arr[index];
@@ -44,13 +47,23 @@ Elem* Cache::put(int addr, Data* cont) {
 }
 // method write: sync = false.
 Elem* Cache::write(int addr, Data* cont) {
-    for(int i = 0; i < MAXSIZE; i++){
-        if(arr[i]->addr == addr) {
-            arr[i]->data = cont;
-            arr[i]->sync = false;
-            return NULL;
+    if(p <= MAXSIZE){
+        for(int i = 0; i < p; i++){
+            if(arr[i]->addr == addr) {
+                arr[i]->data = cont;
+                arr[i]->sync = false;
+                return NULL;
+            }
+        } 
+    }else{
+        for(int i = 0; i < MAXSIZE; i++){
+            if(arr[i]->addr == addr) {
+                arr[i]->data = cont;
+                arr[i]->sync = false;
+                return NULL;
+            }
         }
-    } 
+    }   
     Elem* result;
     int index;
     Elem* newElem = new Elem(addr, cont, false);
@@ -60,7 +73,7 @@ Elem* Cache::write(int addr, Data* cont) {
         p++;
         return NULL;
     }
-    else if (p = MAXSIZE){ //in case cache is full
+    else if (p == MAXSIZE){ //in case cache is full
         if(addr % 2 == 0){
             index = queuePrio();
             result = arr[index];
@@ -79,7 +92,7 @@ Elem* Cache::write(int addr, Data* cont) {
     return NULL;
 }
 void Cache::print() {
-    if(p == 0) throw 0;
+    if(p == 0) return;
     else if(p > 0 && p <= MAXSIZE){
         for(int i = p - 1; i >= 0; i--){
             arr[i]->print();
@@ -87,15 +100,60 @@ void Cache::print() {
     }
     else if(p == MAXSIZE + 1){
         sort();
-        for(int i = 0; i < MAXSIZE; i++)
+        for(int i = 0; i < MAXSIZE; i++){
             arr[indexSort[i]]->print();
+        }
     }
 }
+
 void Cache::preOrder() {
-	for (int i = 0; i < p; i++)
-        arr[i]->print();
+    BST* temp = new BST();
+    if(p == 0) return;
+    else if(p > 0 && p <= MAXSIZE){
+        for(int i = 0; i < p; i++){
+            temp->insert(arr[i]->addr, arr[i]->data, arr[i]->sync,i,temp->root);    
+        }
+    }
+    else if(p == MAXSIZE + 1){
+        sort();
+        int temp_index = 0;
+        int temp_addr = 0;
+        Data* temp_data = NULL;
+        bool temp_sync = true;
+        for(int i = MAXSIZE - 1; i>=0; i--){
+            temp_index = indexSort[i];
+            temp_addr = arr[temp_index]->addr;
+            temp_data = arr[temp_index]->data;
+            temp_sync = arr[temp_index]->sync;
+            temp->insert(temp_addr, temp_data, temp_sync, temp_index,temp->root);
+        }
+    }
+    // print preorder
+    temp->printPreOder(temp->root);
+    delete temp;
 }
 void Cache::inOrder() {
-    for (int i = 0; i < p; i++)
-        arr[i]->print();
+    BST* temp = new BST();
+    if(p == 0) return;
+    else if(p > 0 && p <= MAXSIZE){
+        for(int i = 0; i < p; i++){
+            temp->insert(arr[i]->addr, arr[i]->data, arr[i]->sync,i,temp->root);    
+        }
+    }
+    else if(p == MAXSIZE + 1){
+        sort();
+        int temp_index = 0;
+        int temp_addr = 0;
+        Data* temp_data = NULL;
+        bool temp_sync = true;
+        for(int i = MAXSIZE - 1; i>=0; i--){
+            temp_index = indexSort[i];
+            temp_addr = arr[temp_index]->addr;
+            temp_data = arr[temp_index]->data;
+            temp_sync = arr[temp_index]->sync;
+            temp->insert(temp_addr, temp_data, temp_sync, temp_index,temp->root);
+        }
+    }
+    temp->printInOder(temp->root);
+    delete temp;
 }

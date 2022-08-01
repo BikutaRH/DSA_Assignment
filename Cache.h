@@ -4,20 +4,19 @@
 #include "main.h"
 
 class Cache {
+public:
         Elem** arr;
-        int priority[MAXSIZE];
-        int indexSort[MAXSIZE];
-        int maxLive; // time of element live longest
+        int priority[MAXSIZE];// priority of time living: 0 == longest; maxsize - 1: shortest
+        int indexSort[MAXSIZE];// sort of index element from logest  
+        int maxLive; // time of element live shortest to longest
         int p; // number of the element currenly existing in cache
-	public:
+        class BST; // forward declare
+public:
     Cache(int s) {
         arr = new Elem*[s];
         p = 0;
     }
     ~Cache() {
-        for(int i = 0; i < MAXSIZE; i++){
-            delete[] arr[i];
-        }
         delete[] arr;
     }   
 		Data* read(int addr);
@@ -58,105 +57,87 @@ class Cache {
                 maxLive--;
             }
         }
+    class BST{
+    public:
+        class Node; // forward declare
+        Node* root;
+        Node* insert(int addr, Data* data, bool sync, int index, Node*& bst){
+            if(bst == NULL){
+                bst = new Node(addr,data, sync,index, NULL, NULL);
+                // cout << bst->addr;
+            }
+            else if( addr < bst->addr){
+                bst->left = insert(addr, data, sync, index, bst->left);
+            }
+            else if(addr > bst->addr){
+                bst->right = insert(addr, data, sync, index, bst->right);
+            }
+            return bst; 
+        }
+
+        Node* makeEmpty(Node* bst){
+            if(bst == NULL) return NULL;
+            else{
+                makeEmpty(bst->left);
+                makeEmpty(bst->right);
+                delete bst;
+            }
+            return NULL;
+        }
+
+        void printPreOder(Node*& bst){
+            if(bst == NULL){
+                // cout << "Rong";
+                return;
+            }
+            cout << bst->addr << " " << bst->data->getValue() << " " << (bst->sync?"true":"false") << endl;
+            printPreOder(bst->left);
+            printPreOder(bst->right);
+        }
+
+        void printInOder(Node*& bst){
+            if(bst == NULL){
+                // cout << "rong";
+                return;
+            } 
+            printInOder(bst->left);
+            cout << bst->addr << " " << bst->data->getValue() << " " << (bst->sync?"true":"false") << endl;
+            printInOder(bst->right);
+        }
+    class Node{
+        public:
+            int addr;
+            Data* data;
+            bool sync;
+            int index;
+            Node* left;
+            Node* right;
+        public:
+            Node(){
+                addr = 0;
+                data = NULL;
+                sync = true;
+                index = 0;
+                left = NULL;
+                right = NULL;
+            }
+            Node(int addr, Data* data, bool sync, int index, Node* left, Node* right){
+                this->addr = addr;
+                this->data =  data;
+                this->sync = sync;
+                this->index = index;
+                this->left = left;
+                this->right = right;
+            }
+            ~Node(){};
+        };         
+        BST(){
+            root = NULL;
+        }
+        ~BST(){
+            root = makeEmpty(root);
+        }
+    };  
 };
 
-class BST{
-private: 
-    class Node; // forward declare
-    Node* root;
-    int count;
-
-    Node* insert(Elem* element, Node* bst){
-        if(bst == NULL){
-            bst = new Node(element, NULL, NULL);
-        }
-        else if( element->addr < bst->element->addr){
-            bst->left = insert(element, bst->left);
-        }
-        else if(element->addr > bst->element->addr){
-            bst->right = insert(element, bst->right);
-        }
-        return bst; 
-    }
-
-    Node* makeEmpty(Node* bst){
-        if(bst == NULL) return NULL;
-        else{
-            makeEmpty(bst->left);
-            makeEmpty(bst->right);
-            delete bst;
-        }
-        return NULL;
-    }
-    
-    Node* findMin(Node* bst){
-        if(bst == NULL) return NULL;
-        else if(bst->left == NULL) return bst;
-        else return findMin(bst->left);
-    }   
-
-    Node* findMax(Node* bst) {
-        if(bst == NULL) return NULL;
-        else if(bst->right == NULL) return bst;
-        else return findMax(bst->right);
-    }
-
-    Node* remove(Elem* element, Node* bst) {
-        Node* temp;
-        if(bst == NULL) return NULL;
-        else if(element->addr < bst->element->addr) bst->left = remove(element, bst->left);
-        else if(element->addr > bst->element->addr) bst->right = remove(element, bst->right);
-        else if(bst->left && bst->right){
-            temp = findMin(bst->right);
-            bst->element->addr = temp->element->addr;
-            bst->right = remove(bst->element, bst->right);
-        }
-        else
-        {
-            temp = bst;
-            if(bst->left == NULL)
-                bst = bst->right;
-            else if(bst->right == NULL)
-                bst = bst->left;
-            delete temp;
-        }
-
-        return bst;
-    }
-public:
-    class Node{
-    public:
-        Elem* element;
-        Node* left;
-        Node* right;
-    public:
-        Node(){
-            left = NULL;
-            right = NULL;
-        }
-        Node(Node* left, Node* right){
-            this->left = left;
-            this->right = right;
-        }
-        Node(Elem* elem, Node* left, Node* right){
-            element = elem;
-            this->left = left;
-            this->right = right;
-        }
-    };
-    BST(){
-        root = NULL;
-    }
-    ~BST(){
-        root = makeEmpty(root);
-    }
-    void insert(Elem* element) {
-        root = insert(element, root);
-    }
-
-    void remove(Elem* element) {
-        root = remove(Elem* element, root);
-    }
-
-};  
 #endif

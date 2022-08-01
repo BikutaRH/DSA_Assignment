@@ -4,7 +4,7 @@
 #include<string>
 
 using namespace std; 
-#define MAXSIZE 15
+#define MAXSIZE 10
 class Data {
 	public:
 	virtual string getValue() = 0;
