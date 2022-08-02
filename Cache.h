@@ -17,6 +17,11 @@ public:
         p = 0;
     }
     ~Cache() {
+        if(p <= MAXSIZE){
+            for(int i = 0; i < p; i++) delete arr[i];
+        }else{
+            for(int i = 0; i < MAXSIZE; i++) delete arr[i];
+        }
         delete[] arr;
     }   
 		Data* read(int addr);
@@ -75,7 +80,7 @@ public:
             return bst; 
         }
 
-        Node* makeEmpty(Node* bst){
+        Node* makeEmpty(Node*& bst){
             if(bst == NULL) return NULL;
             else{
                 makeEmpty(bst->left);
@@ -87,7 +92,6 @@ public:
 
         void printPreOder(Node*& bst){
             if(bst == NULL){
-                // cout << "Rong";
                 return;
             }
             cout << bst->addr << " " << bst->data->getValue() << " " << (bst->sync?"true":"false") << endl;
@@ -97,7 +101,6 @@ public:
 
         void printInOder(Node*& bst){
             if(bst == NULL){
-                // cout << "rong";
                 return;
             } 
             printInOder(bst->left);
